@@ -13,40 +13,11 @@
       }
     }
   ],
-  "routes": [
-    {
-      "src": "/auth/google",
-      "dest": "/index.js"
-    },
-    {
-      "src": "/auth/google/callback",
-      "dest": "/index.js"
-    },
-    {
-      "src": "/api/logout",
-      "dest": "/index.js"
-    },
-    {
-      "src": "/api/current_user",
-      "dest": "/index.js"
-    },
-    {
-      "src": "/api/stripe",
-      "dest": "/index.js"
-    },
-    {
-      "src": "/api/surveys",
-      "dest": "/index.js"
-    },
-    {
-      "src": "/api/surveys/:id/webhooks",
-      "dest": "/index.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/client/build/$1"
+  "build": {
+    "env": {
+      "DISABLE_ESLINT_PLUGIN": "true"
     }
-  ],
+  },
   "rewrites": [
     {
       "source": "/auth/(.*)",

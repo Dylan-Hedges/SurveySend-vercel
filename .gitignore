@@ -6,3 +6,5 @@ dev.js
 
 # Build directories
 client/build
+
+.vercel
