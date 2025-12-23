@@ -13,6 +13,7 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "build": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client",
+    "postinstall": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && DISABLE_ESLINT_PLUGIN=true npm run build --prefix client",
     "webhook": "forever sendgrid_webhook.js"
   },
   "repository": {
