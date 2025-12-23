@@ -1,0 +1,8 @@
+node_modules
+dev.js
+
+# Vercel
+.vercel
+
+# Build directories
+client/build

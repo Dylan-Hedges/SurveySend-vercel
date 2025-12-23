@@ -1,0 +1,64 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "index.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "client/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/auth/google",
+      "dest": "/index.js"
+    },
+    {
+      "src": "/auth/google/callback",
+      "dest": "/index.js"
+    },
+    {
+      "src": "/api/logout",
+      "dest": "/index.js"
+    },
+    {
+      "src": "/api/current_user",
+      "dest": "/index.js"
+    },
+    {
+      "src": "/api/stripe",
+      "dest": "/index.js"
+    },
+    {
+      "src": "/api/surveys",
+      "dest": "/index.js"
+    },
+    {
+      "src": "/api/surveys/:id/webhooks",
+      "dest": "/index.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/client/build/$1"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/auth/(.*)",
+      "destination": "/index.js"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/index.js"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/client/build/index.html"
+    }
+  ]
+}
