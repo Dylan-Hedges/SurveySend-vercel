@@ -3,45 +3,16 @@
   "builds": [
     {
       "src": "index.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "client/package.json",
-      "use": "@vercel/static-build",
+      "use": "@vercel/node",
       "config": {
-        "distDir": "build"
+        "includeFiles": ["client/build/**"]
       }
     }
   ],
-  "build": {
-    "env": {
-      "DISABLE_ESLINT_PLUGIN": "true"
-    }
-  },
   "routes": [
     {
-      "src": "/static/(.*)",
-      "dest": "/client/build/static/$1"
-    },
-    {
-      "src": "/manifest.json",
-      "dest": "/client/build/manifest.json"
-    },
-    {
-      "src": "/favicon.ico",
-      "dest": "/client/build/favicon.ico"
-    },
-    {
-      "src": "/auth/(.*)",
-      "dest": "/index.js"
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "/index.js"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/client/build/index.html"
+      "dest": "/index.js"
     }
   ]
 }
