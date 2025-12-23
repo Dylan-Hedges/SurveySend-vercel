@@ -18,18 +18,30 @@
       "DISABLE_ESLINT_PLUGIN": "true"
     }
   },
-  "rewrites": [
+  "routes": [
     {
-      "source": "/auth/(.*)",
-      "destination": "/index.js"
+      "src": "/static/(.*)",
+      "dest": "/client/build/static/$1"
     },
     {
-      "source": "/api/(.*)",
-      "destination": "/index.js"
+      "src": "/manifest.json",
+      "dest": "/client/build/manifest.json"
     },
     {
-      "source": "/(.*)",
-      "destination": "/client/build/index.html"
+      "src": "/favicon.ico",
+      "dest": "/client/build/favicon.ico"
+    },
+    {
+      "src": "/auth/(.*)",
+      "dest": "/index.js"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/index.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/client/build/index.html"
     }
   ]
 }
