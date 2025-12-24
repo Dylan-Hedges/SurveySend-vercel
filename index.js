@@ -46,4 +46,11 @@ if (process.env.NODE_ENV === 'production'){
 
 //----Listen on the Heroku environment variable OR port 5000----
 const PORT = process.env.PORT || 5000;
-app.listen(PORT);
+
+// Export for Vercel serverless (production)
+if (process.env.NODE_ENV === 'production') {
+  module.exports = app;
+} else {
+  // Listen for local development
+  app.listen(PORT);
+}
