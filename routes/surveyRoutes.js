@@ -66,8 +66,10 @@ module.exports = (app) => {
     const mailer = new Mailer(survey, surveyTemplate(survey));
     //Error Handeling - Tries the below and returns error code if there is an issue
     try{
-      //Sends the Mailer object to the sendgrid API (email provider)
-      await mailer.send();
+      //Sends the Mailer object to the Resend API (email provider)
+      console.log('Attempting to send email...');
+      const emailResponse = await mailer.send();
+      console.log('Email sent successfully:', emailResponse);
       //Saves the survey to the DB
       await survey.save();
       //Reduces user credits by 1
@@ -77,6 +79,7 @@ module.exports = (app) => {
       //Send the updated user model to the browser so that the credits can update in header
       res.send(user);
     } catch(err){
+      console.error('Error sending email or saving survey:', err);
       res.status(422).send(err);
     }
   });

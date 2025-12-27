@@ -17,13 +17,21 @@ class Mailer {
 
   //Sends email using Resend API
   async send() {
-    const response = await this.resend.emails.send({
+    const emailData = {
       from: this.from,
       to: this.recipients,
       subject: this.subject,
       html: this.html,
-      // Resend enables click tracking by default
+    };
+
+    console.log('Sending email with data:', {
+      from: emailData.from,
+      to: emailData.to,
+      subject: emailData.subject,
+      htmlLength: emailData.html?.length
     });
+
+    const response = await this.resend.emails.send(emailData);
     return response;
   }
 }
