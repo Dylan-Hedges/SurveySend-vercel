@@ -23,7 +23,24 @@ module.exports = (app) => {
 
 
   //RH that displays text after clicking Yes or No - :surveyID & :choice are wildcards
-  app.get('/api/surveys/:surveyId/:choice', (req, res) =>{
+  app.get('/api/surveys/:surveyId/:choice', async (req, res) =>{
+    const { surveyId, choice } = req.params;
+
+    // Update survey in database - increment yes/no count and mark as responded
+    await Survey.updateOne(
+      {
+        _id: surveyId,
+        recipients: {
+          $elemMatch: { responded: false }
+        }
+      },
+      {
+        $inc: { [choice]: 1 },
+        $set: { 'recipients.$.responded': true },
+        lastResponded: new Date()
+      }
+    );
+
     res.send('Thanks for voting');
   });
 
@@ -76,6 +93,9 @@ module.exports = (app) => {
     res.send(surveys);
   });
 
+  // NOTE: This webhook handler was used with SendGrid for click tracking.
+  // With Resend, responses are now handled directly in the GET route above.
+  // This endpoint can be removed or kept for future webhook integrations.
   //RH for updating DB with responses - URL is created when user clicks yes or no, extracts survey id, response & email, MongoDB query that searches DB for survey and updates response = true and +1 to yes or no count
   app.post('/api/surveys/webhooks',(req, res) => {
     //Extracts the surveyId and choice from the URL
