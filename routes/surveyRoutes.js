@@ -22,16 +22,50 @@ module.exports = (app) => {
   });
 
 
-  //RH that displays text after clicking Yes or No - :surveyID & :choice are wildcards
+  //RH that displays confirmation page when user clicks Yes or No - :surveyID & :choice are wildcards
   app.get('/api/surveys/:surveyId/:choice', async (req, res) =>{
     const { surveyId, choice } = req.params;
+    const { email } = req.query;
 
-    // Update survey in database - increment yes/no count and mark as responded
+    // Show confirmation page with a form that submits via POST
+    res.send(`
+      <html>
+        <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
+          <h2>Confirm Your Vote</h2>
+          <p>You selected: <strong>${choice.toUpperCase()}</strong></p>
+          <p>Click the button below to confirm your vote.</p>
+          <form method="POST" action="/api/surveys/vote">
+            <input type="hidden" name="surveyId" value="${surveyId}" />
+            <input type="hidden" name="choice" value="${choice}" />
+            <input type="hidden" name="email" value="${email}" />
+            <button type="submit" style="
+              background-color: #4CAF50;
+              color: white;
+              padding: 15px 32px;
+              text-align: center;
+              font-size: 16px;
+              border: none;
+              border-radius: 4px;
+              cursor: pointer;
+            ">Confirm Vote</button>
+          </form>
+        </body>
+      </html>
+    `);
+  });
+
+  //RH that actually records the vote when user confirms - POST prevents email scanners from auto-voting
+  app.post('/api/surveys/vote', async (req, res) => {
+    const { surveyId, choice, email } = req.body;
+
+    console.log('Recording vote:', { surveyId, choice, email });
+
+    // Update survey in database - increment yes/no count and mark specific recipient as responded
     await Survey.updateOne(
       {
         _id: surveyId,
         recipients: {
-          $elemMatch: { responded: false }
+          $elemMatch: { email: email, responded: false }
         }
       },
       {
@@ -41,7 +75,14 @@ module.exports = (app) => {
       }
     );
 
-    res.send('Thanks for voting');
+    res.send(`
+      <html>
+        <body style="font-family: Arial, sans-serif; text-align: center; padding: 50px;">
+          <h2>Thanks for voting!</h2>
+          <p>Your response has been recorded.</p>
+        </body>
+      </html>
+    `);
   });
 
   //RH to create a new survey & send to recipients
@@ -62,14 +103,17 @@ module.exports = (app) => {
       //Records when survey is sent
       dateSent: Date.now()
     });
-    //Creates a new instance of the mail object - passes in the survey (subject & recipients) data & the email template
-    const mailer = new Mailer(survey, surveyTemplate(survey));
     //Error Handeling - Tries the below and returns error code if there is an issue
     try{
-      //Sends the Mailer object to the Resend API (email provider)
-      console.log('Attempting to send email...');
-      const emailResponse = await mailer.send();
-      console.log('Email sent successfully:', emailResponse);
+      //Send individual emails to each recipient
+      console.log('Attempting to send emails to recipients...');
+      for (const recipient of survey.recipients) {
+        //Creates a new instance of the mail object for each recipient - passes survey data, recipient email & customized email template
+        const mailer = new Mailer(survey, recipient.email, surveyTemplate(survey, recipient.email));
+        //Sends the Mailer object to the Resend API (email provider)
+        const emailResponse = await mailer.send();
+        console.log(`Email sent successfully to ${recipient.email}:`, emailResponse);
+      }
       //Saves the survey to the DB
       await survey.save();
       //Reduces user credits by 1

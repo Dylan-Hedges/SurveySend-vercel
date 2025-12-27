@@ -3,7 +3,7 @@ const keys = require('../config/keys');
 
 //Creates Mailer object that is sent to the email provider
 class Mailer {
-  constructor({ subject, recipients }, content) {
+  constructor({ subject }, recipientEmail, content) {
     this.resend = new Resend(keys.resendApiKey);
     //Who the email is from
     this.from = keys.resendSender;
@@ -11,15 +11,15 @@ class Mailer {
     this.subject = subject;
     //The body of the email (HTML content)
     this.html = content;
-    //Who it is being sent to - extract email addresses
-    this.recipients = recipients.map(({ email }) => email);
+    //Who it is being sent to - single recipient email
+    this.recipient = recipientEmail;
   }
 
   //Sends email using Resend API
   async send() {
     const emailData = {
       from: this.from,
-      to: this.recipients,
+      to: this.recipient,
       subject: this.subject,
       html: this.html,
     };
