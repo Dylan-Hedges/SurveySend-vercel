@@ -6,7 +6,7 @@ module.exports = {
   cookieKey: process.env.COOKIE_KEY,
   stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
   stripeSecretKey: process.env.STRIPE_SECRET_KEY,
-	sendGridKey: process.env.SEND_GRID_KEY,
-  sendGridSender: process.env.SEND_GRID_SENDER,
+	resendApiKey: process.env.RESEND_API_KEY,
+  resendSender: process.env.RESEND_SENDER,
   redirectDomain: process.env.REDIRECT_DOMAIN
 }
